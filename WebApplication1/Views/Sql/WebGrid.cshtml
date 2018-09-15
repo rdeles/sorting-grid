@@ -1,0 +1,104 @@
+﻿@model IEnumerable<WebApplication1.Models.MyModel>
+
+@{
+    ViewBag.Title = "WebGrid";
+    var grid = new WebGrid(null,
+        defaultSort: ViewBag.sortCol,
+        sortFieldName: "sortCol",
+        sortDirectionFieldName: "sortDir",
+        rowsPerPage: ViewBag.rowsPerPage);
+    grid.Bind(Model, rowCount: ViewBag.count, autoSortAndPage: false);
+}
+
+<STYLE type="text/css">
+    .ProductID {
+        width: 105px;
+        text-align: right;
+    }
+    .ProductName {
+        width: 130px;
+    }
+    .UnitPrice {
+        width: 100px;
+        text-align: right;
+    }
+    .UnitsInStock {
+        width: 130px;
+        text-align: right;
+    }
+    .UnitsOnOrder {
+        width: 140px;
+        text-align: right;
+    }
+    .CategoryName {
+        width: 130px;
+    }
+    .CompanyName {
+        width: 135px;
+    }
+    .ContactName {
+        width: 125px;
+    }
+    .Country {
+        width: 55px;
+    }
+    .table {
+        border: 1px solid #D3D3D3;
+        width: 100%;
+    }
+    .table td, th {
+        border: 1px solid #D3D3D3;
+    }
+</STYLE>
+
+<h2>WebGrid View</h2>
+
+<h3>Missing (useful but not complete checklist)</h3>
+<ul>
+    <li>Response HTML table with complete borders and all the required columns</li>
+    <li>Header of primary sorted column has up/down arrows</li>
+    <li>Extra space in headers – if required in composed words</li>
+    <li>Primary sorting possible on all columns, coming from all tables</li>
+    <li>Secondary sorting on main primary key, in the same direction as the primary sorting</li>
+    <li>Reasonable column sizes s.t. headers always fit in one row, even with sorting arrows</li>
+    <li>Price has currency formating</li>
+    <li>Numbers are right aligned</li>
+    <li>Table footer has a pager with a complete set of usual options (first, previous, page numbers, next, last)</li>
+    <li>The "Ordering by" label indicates the current primary sorting column and direction </li>
+    <li>The automatically generated SQL code is displayed in a bottom textarea box</li>
+    <li>For the purpose of sorting, nulls – if any – are considered lower than any non-null value, so they appear first in ASC order</li>
+    <li>Illegal column names and sorting orders are replaced by default values</li>
+</ul>
+
+<div>
+    @grid.GetHtml(
+        tableStyle: "table",
+        headerStyle: "header",
+        columns: grid.Columns(
+            grid.Column(header: "Product ID" + WebApplication1.Models.SortArrow.SortDirection(ref grid, "ProductID"), columnName: "ProductID", style: "ProductID"),
+            grid.Column(header: "Product Name" + WebApplication1.Models.SortArrow.SortDirection(ref grid, "ProductName"), columnName: "ProductName", style: "ProductName"),
+            grid.Column(header: "Unit Price" + WebApplication1.Models.SortArrow.SortDirection(ref grid, "UnitPrice"), columnName: "UnitPrice", style: "UnitPrice", format: (item) => new HtmlString (string.Format("{0:C2}", item.UnitPrice))),
+            grid.Column(header: "Units In Stock" + WebApplication1.Models.SortArrow.SortDirection(ref grid, "UnitsInStock"), columnName: "UnitsInStock", style: "UnitsInStock"),
+            grid.Column(header: "Units On Order" + WebApplication1.Models.SortArrow.SortDirection(ref grid, "UnitsOnOrder"), columnName: "UnitsOnOrder", style: "UnitsOnOrder"),
+            grid.Column(header: "Category Name" + WebApplication1.Models.SortArrow.SortDirection(ref grid, "CategoryName"), columnName: "CategoryName", style: "CategoryName"),
+            grid.Column(header: "Company Name" + WebApplication1.Models.SortArrow.SortDirection(ref grid, "CompanyName"), columnName: "CompanyName", style: "CompanyName"),
+            grid.Column(header: "Contact Name" + WebApplication1.Models.SortArrow.SortDirection(ref grid, "ContactName"), columnName: "ContactName", style: "ContactName"),
+            grid.Column(header: "Country" + WebApplication1.Models.SortArrow.SortDirection(ref grid, "Country"), columnName: "Country", style: "Country")
+        ),
+        mode: WebGridPagerModes.All
+    )
+
+    <div>
+        <h3>Ordering by:</h3>
+        <b>@ViewBag.sortCol</b> @ViewBag.dir
+    </div>
+</div>
+
+<hr />
+
+<div style="max-width: 100%;">
+    <h4>Request SQL:</h4>
+    <textarea id="styled" rows="16" cols="100" style="max-width: 100%;">
+        @ViewBag.sql
+    </textarea>
+</div>
